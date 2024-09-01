@@ -3,7 +3,6 @@ document.addEventListener("DOMContentLoaded", function () {
     function changeTextAndColor(element) {
         const inputText = document.getElementById("inputText").value;
         element.innerText = inputText;
-        element.style.backgroundColor = "lightgray"; // Change background color to light gray
     }
 
     // Add event listener to change text and background color on click
@@ -34,11 +33,13 @@ document.addEventListener("DOMContentLoaded", function () {
     let currentIndex = 0; // Start from 'A'
     let maxIndex = content.length - 1; // Index for 'Z'
 
+    // Store the original order for restoration
+    const originalContentOrder = Array.from(document.querySelectorAll(".col-md-1, .col-md-2, .col-md-3, .col-md-4, .col-md-6")).map(element => element.innerText);
+
     // Function to rearrange elements in alphabetical order
     function rearrangeContentElements(order) {
         const elements = document.querySelectorAll(".col-md-1, .col-md-2, .col-md-3, .col-md-4, .col-md-6");
 
-        // Move elements to the next or previous letter in the alphabet
         if (order === "forward" && currentIndex < maxIndex) {
             currentIndex++; // Move to the next letter
         } else if (order === "backward" && currentIndex > 0) {
@@ -51,12 +52,40 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
+    // Function to rearrange elements in random order
+    function randomizeContent() {
+        const elements = document.querySelectorAll(".col-md-1, .col-md-2, .col-md-3, .col-md-4, .col-md-6");
+        let randomizedContent = [...elements].map(el => el.innerText);
+        
+        // Shuffle the content array
+        randomizedContent.sort(() => Math.random() - 0.5);
+
+        // Update each element's content
+        elements.forEach((element, index) => {
+            element.innerText = randomizedContent[index];
+        });
+    }
+
+    // Function to reset content to the original order
+    function resetToOriginalOrder() {
+        const elements = document.querySelectorAll(".col-md-1, .col-md-2, .col-md-3, .col-md-4, .col-md-6");
+
+        // Reset each element's content to its original state
+        elements.forEach((element, index) => {
+            element.innerText = originalContentOrder[index];
+        });
+    }
+
     // Keyboard event listener for rearranging elements
     document.addEventListener("keydown", function (event) {
         if (event.key === "ArrowRight") {
             rearrangeContentElements("forward");
         } else if (event.key === "ArrowLeft") {
             rearrangeContentElements("backward");
+        } else if (event.key === "ArrowDown") {
+            randomizeContent(); // Randomize the content
+        } else if (event.key === "ArrowUp") {
+            resetToOriginalOrder(); // Reset to original content order
         }
     });
 });
