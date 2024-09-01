@@ -7,7 +7,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // Add event listener to change text and background color on click
-    document.querySelectorAll(".col-md-2, .col-md-3, .col-md-4").forEach(function (element) {
+    document.querySelectorAll(".col-md-1, .col-md-2, .col-md-3, .col-md-4, .col-md-6").forEach(function (element) {
         element.addEventListener("click", function () {
             changeTextAndColor(element);
         });
@@ -15,7 +15,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Function to toggle bold text
     function toggleBold() {
-        document.querySelectorAll(".col-md-2, .col-md-3, .col-md-4").forEach(function (element) {
+        document.querySelectorAll(".col-md-1, .col-md-2, .col-md-3, .col-md-4, .col-md-6").forEach(function (element) {
             if (element.style.fontWeight === "bold") {
                 element.style.fontWeight = "normal";
             } else {
@@ -29,42 +29,34 @@ document.addEventListener("DOMContentLoaded", function () {
         toggleBold();
     });
 
-    // Function to rearrange elements based on arrow keys
-    function rearrangeElements(order) {
-        const rows = document.querySelectorAll(".row");
-        let allElements = [];
+    // Initialize content from "Content A" to "Content R"
+    let content = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split('');
+    let currentIndex = 0; // Start from 'A'
+    let maxIndex = content.length - 1; // Index for 'Z'
 
-        rows.forEach(function (row) {
-            row.querySelectorAll(".col-md-2, .col-md-3, .col-md-4").forEach(function (element) {
-                allElements.push(element);
-            });
-        });
+    // Function to rearrange elements in alphabetical order
+    function rearrangeContentElements(order) {
+        const elements = document.querySelectorAll(".col-md-1, .col-md-2, .col-md-3, .col-md-4, .col-md-6");
 
-        if (order === "reverse") {
-            allElements.reverse();
-        } else if (order === "random") {
-            allElements.sort(() => Math.random() - 0.5);
-        } else if (order === "original") {
-            allElements.sort((a, b) => a.textContent.localeCompare(b.textContent));
+        // Move elements to the next or previous letter in the alphabet
+        if (order === "forward" && currentIndex < maxIndex) {
+            currentIndex++; // Move to the next letter
+        } else if (order === "backward" && currentIndex > 0) {
+            currentIndex--; // Move to the previous letter
         }
 
-        let index = 0;
-        rows.forEach(function (row) {
-            row.querySelectorAll(".col-md-2, .col-md-3, .col-md-4").forEach(function (element) {
-                element.innerText = allElements[index].innerText;
-                index++;
-            });
+        // Update each element's content
+        elements.forEach((element, index) => {
+            element.innerText = "Content " + content[(index + currentIndex) % content.length];
         });
     }
 
     // Keyboard event listener for rearranging elements
     document.addEventListener("keydown", function (event) {
-        if (event.key === "ArrowLeft") {
-            rearrangeElements("reverse");
-        } else if (event.key === "ArrowDown") {
-            rearrangeElements("random");
-        } else if (event.key === "ArrowUp") {
-            rearrangeElements("original");
+        if (event.key === "ArrowRight") {
+            rearrangeContentElements("forward");
+        } else if (event.key === "ArrowLeft") {
+            rearrangeContentElements("backward");
         }
     });
 });
